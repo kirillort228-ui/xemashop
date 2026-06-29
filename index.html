@@ -1,0 +1,2820 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReviewMarket — Система отзывов на товары</title>
+  <meta name="description"
+    content="ReviewMarket — современная платформа для отзывов на товары с профилями пользователей">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ===== RESET ===== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      /* Real Light Theme */
+      --bg-page: #f4f8ff;
+      --bg-gradient: linear-gradient(135deg, #ffffff 0%, #f5f9ff 28%, #edf6ff 52%, #e6f2ff 72%, #d8ecff 100%);
+      --bg-card: rgba(255, 255, 255, 0.82);
+      --bg-card-hover: rgba(255, 255, 255, 0.96);
+      --bg-card-solid: rgba(255, 255, 255, 0.9);
+      --bg-input: rgba(255, 255, 255, 0.88);
+      --bg-nav: rgba(255, 255, 255, 0.72);
+      --text-primary: #111827;
+      --text-secondary: rgba(17, 24, 39, 0.7);
+      --text-tertiary: rgba(17, 24, 39, 0.42);
+      --link-color: #0a84ff;
+      --link-hover: #006edb;
+      --border-color: rgba(17, 24, 39, 0.12);
+      --border-separator: rgba(17, 24, 39, 0.14);
+      --star-color: #ffb800;
+      --star-empty: rgba(17, 24, 39, 0.18);
+      --danger: #ff453a;
+      --success: #16a34a;
+      --blue-accent: #0a84ff;
+      --blue-accent-hover: #006edb;
+      --blue-light: rgba(10, 132, 255, 0.12);
+      --shadow-card: 0 8px 30px rgba(15, 23, 42, 0.1);
+      --shadow-modal: 0 24px 80px rgba(15, 23, 42, 0.22);
+      --modal-overlay: rgba(15, 23, 42, 0.35);
+      --radius: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 24px;
+      --radius-pill: 980px;
+      --transition: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+      --nav-border: rgba(17, 24, 39, 0.08);
+      --badge-bg: rgba(17, 24, 39, 0.06);
+      --glass-blur: blur(40px) saturate(180%);
+    }
+
+    [data-theme="dark"] {
+      /* Previous Light Theme is now Dark Theme */
+      --bg-page: #0b0e2a;
+      --bg-gradient: linear-gradient(135deg, #0b0e2a 0%, #1a1050 25%, #2d1b69 40%, #4a2c8a 55%, #2563a8 70%, #1a8aab 85%, #38bdf8 100%);
+      --bg-card: rgba(255, 255, 255, 0.08);
+      --bg-card-hover: rgba(255, 255, 255, 0.13);
+      --bg-card-solid: rgba(255, 255, 255, 0.1);
+      --bg-input: rgba(255, 255, 255, 0.07);
+      --bg-nav: rgba(11, 14, 42, 0.65);
+      --text-primary: #f5f5f7;
+      --text-secondary: rgba(245, 245, 247, 0.7);
+      --text-tertiary: rgba(245, 245, 247, 0.4);
+      --link-color: #64d2ff;
+      --link-hover: #5ac8fa;
+      --border-color: rgba(255, 255, 255, 0.1);
+      --border-separator: rgba(255, 255, 255, 0.12);
+      --star-color: #ffcc00;
+      --star-empty: rgba(255, 255, 255, 0.18);
+      --danger: #ff453a;
+      --success: #30d158;
+      --blue-accent: #64d2ff;
+      --blue-accent-hover: #5ac8fa;
+      --blue-light: rgba(100, 210, 255, 0.12);
+      --shadow-card: 0 4px 30px rgba(0, 0, 0, 0.2);
+      --shadow-modal: 0 24px 80px rgba(0, 0, 0, 0.5);
+      --modal-overlay: rgba(0, 0, 0, 0.55);
+      --nav-border: rgba(255, 255, 255, 0.08);
+      --badge-bg: rgba(255, 255, 255, 0.1);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text-primary);
+      line-height: 1.47059;
+      letter-spacing: -0.022em;
+      transition: color var(--transition);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    /* ===== NAVIGATION BAR (Apple-style) ===== */
+    .header {
+      background: var(--bg-nav);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      border-bottom: 1px solid var(--nav-border);
+      padding: 0 22px;
+    }
+
+    .header-inner {
+      width: 100%;
+      max-width: 1024px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: opacity var(--transition);
+    }
+
+    .logo:hover {
+      opacity: 0.7;
+    }
+
+    .logo-icon {
+      font-size: 1.15rem;
+      color: var(--text-primary);
+      opacity: 0.85;
+    }
+
+    .logo-text {
+      font-size: 0.93rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .header-center {
+      flex: 1;
+      max-width: 320px;
+      margin: 0 1.5rem;
+    }
+
+    .search-box {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 7px 12px 7px 32px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.82rem;
+      outline: none;
+      transition: all var(--transition);
+      backdrop-filter: blur(10px);
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .search-box input:focus {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: var(--blue-accent);
+      box-shadow: 0 0 0 4px var(--blue-light);
+    }
+
+    .search-box .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-tertiary);
+      font-size: 0.72rem;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .profile-link {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 18px 8px 14px;
+      border-radius: var(--radius-pill);
+      background: linear-gradient(135deg, #2563a8, #38bdf8);
+      border: none;
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 600;
+      transition: all 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+      white-space: nowrap;
+      box-shadow: 0 2px 16px rgba(56, 189, 248, 0.3);
+      letter-spacing: -0.01em;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-link::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .profile-link:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 24px rgba(56, 189, 248, 0.45);
+    }
+
+    .profile-link:hover::before {
+      opacity: 1;
+    }
+
+    .profile-link:active {
+      transform: scale(0.97);
+    }
+
+    .profile-link i {
+      font-size: 0.8rem;
+    }
+
+    .profile-link .profile-name {
+      letter-spacing: -0.01em;
+    }
+
+
+    .market-tabs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .market-tab {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 8px 14px;
+      border: none;
+      border-radius: var(--radius-pill);
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 0.76rem;
+      font-weight: 650;
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+
+    .market-tab:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .market-tab.active {
+      color: #fff;
+      background: linear-gradient(135deg, #2563a8, #38bdf8);
+      box-shadow: 0 2px 16px rgba(56, 189, 248, 0.28);
+    }
+
+    .market-tab i {
+      font-size: 0.78rem;
+    }
+
+    /* ===== THEME TOGGLE (Apple-style) ===== */
+    .theme-toggle {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all var(--transition);
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .theme-toggle:hover {
+      opacity: 1;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* ===== MAIN LAYOUT ===== */
+    .main-container {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 0;
+      max-width: 1280px;
+      margin: 0 auto;
+      min-height: calc(100vh - 48px);
+    }
+
+    /* ===== LEFT PANEL ===== */
+    .products-panel {
+      padding: 28px 20px;
+      border-right: 1px solid var(--border-color);
+      overflow-y: auto;
+      max-height: calc(100vh - 52px);
+      position: sticky;
+      top: 52px;
+      background: rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .panel-title {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 16px;
+    }
+
+    .products-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ===== PRODUCT CARD (Glassmorphic) ===== */
+    .product-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px;
+      background: transparent;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all var(--transition);
+      border: 1px solid transparent;
+      position: relative;
+    }
+
+    .product-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .product-card.active {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(100, 210, 255, 0.3);
+      box-shadow: 0 0 20px rgba(100, 210, 255, 0.08);
+    }
+
+    .product-image-wrapper {
+      width: 72px;
+      height: 72px;
+      border-radius: 14px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .product-image.fallback-generated,
+    .detail-image.fallback-generated {
+      object-fit: cover;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .product-card:hover .product-image {
+      transform: scale(1.05);
+    }
+
+    .product-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .product-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .product-price {
+      font-size: 0.82rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .product-rating {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .product-rating .stars {
+      display: flex;
+      gap: 1px;
+    }
+
+    .product-rating .stars i {
+      color: var(--star-color);
+      font-size: 0.6rem;
+    }
+
+    .product-rating .stars i.empty {
+      color: var(--star-empty);
+    }
+
+    .product-rating .rating-text {
+      color: var(--text-tertiary);
+      font-size: 0.72rem;
+    }
+
+    /* ===== RIGHT PANEL ===== */
+    .detail-panel {
+      padding: 0;
+      overflow-y: auto;
+      max-height: calc(100vh - 52px);
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      min-height: 500px;
+      text-align: center;
+      color: var(--text-tertiary);
+      gap: 12px;
+      padding: 40px;
+    }
+
+    .empty-state i {
+      font-size: 2.5rem;
+      opacity: 0.2;
+    }
+
+    .empty-state h3 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .empty-state p {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      max-width: 280px;
+      line-height: 1.5;
+    }
+
+    /* ===== PRODUCT DETAIL (Apple-style hero) ===== */
+    .product-detail {
+      animation: fadeUp 0.5s ease;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .detail-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 56px 40px 40px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .detail-image {
+      width: 220px;
+      height: 220px;
+      border-radius: var(--radius-xl);
+      object-fit: cover;
+      margin-bottom: 28px;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .detail-info {
+      max-width: 500px;
+    }
+
+    .detail-info h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 6px;
+    }
+
+    .detail-info .price {
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+
+    .detail-rating {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .detail-rating .big-score {
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .detail-rating-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+    }
+
+    .detail-rating .stars {
+      display: flex;
+      gap: 2px;
+    }
+
+    .detail-rating .stars i {
+      color: var(--star-color);
+      font-size: 0.85rem;
+    }
+
+    .detail-rating .stars i.empty {
+      color: var(--star-empty);
+    }
+
+    .detail-rating .review-count {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+    }
+
+    .detail-description {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-top: 16px;
+      max-width: 460px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ===== REVIEWS SECTION ===== */
+    .reviews-section {
+      padding: 0;
+    }
+
+    .reviews-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 40px 16px;
+    }
+
+    .reviews-header h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .reviews-header h3 i {
+      display: none;
+    }
+
+    .sort-select {
+      padding: 6px 12px;
+      border: 1px solid var(--border-separator);
+      border-radius: var(--radius-pill);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.76rem;
+      cursor: pointer;
+      outline: none;
+      transition: all var(--transition);
+    }
+
+    .sort-select:focus {
+      border-color: var(--blue-accent);
+    }
+
+    .reviews-list {
+      max-height: 520px;
+      overflow-y: auto;
+      padding: 0 40px;
+    }
+
+    /* ===== REVIEW CARD ===== */
+    .review-card {
+      padding: 20px 0;
+      border-top: 1px solid var(--border-color);
+      position: relative;
+    }
+
+    .review-card:first-child {
+      border-top: none;
+    }
+
+    .review-card.new-review {
+      animation: reviewAppear 0.5s ease;
+    }
+
+    @keyframes reviewAppear {
+      0% {
+        opacity: 0;
+        transform: translateY(-12px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes reviewRemove {
+      to {
+        opacity: 0;
+        transform: translateX(30px);
+        height: 0;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+      }
+    }
+
+    .review-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .review-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: opacity var(--transition);
+    }
+
+    .review-user:hover {
+      opacity: 0.65;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #fff;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+
+    .avatar.large {
+      width: 72px;
+      height: 72px;
+      font-size: 1.4rem;
+    }
+
+    .review-user-info h4 {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .review-user-info .review-date {
+      font-size: 0.72rem;
+      color: var(--text-tertiary);
+    }
+
+    .review-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .review-stars {
+      display: flex;
+      gap: 2px;
+    }
+
+    .review-stars i {
+      color: var(--star-color);
+      font-size: 0.68rem;
+    }
+
+    .review-stars i.empty {
+      color: var(--star-empty);
+    }
+
+    .delete-btn {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition);
+      font-size: 0.72rem;
+    }
+
+    .delete-btn:hover {
+      background: rgba(255, 59, 48, 0.1);
+      color: var(--danger);
+    }
+
+    .review-text {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.58;
+    }
+
+    /* ===== REVIEW FORM ===== */
+    .review-form-container {
+      padding: 28px 40px 40px;
+      border-top: 1px solid var(--border-color);
+      margin-top: 8px;
+    }
+
+    .review-form-container h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .review-form-container h3 i {
+      display: none;
+    }
+
+
+    .reviews-source-note p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border-separator);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.88rem;
+      outline: none;
+      transition: all var(--transition);
+      resize: vertical;
+      backdrop-filter: blur(10px);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--blue-accent);
+      box-shadow: 0 0 0 4px var(--blue-light);
+    }
+
+    .form-group textarea {
+      min-height: 88px;
+    }
+
+    .star-rating-input {
+      display: flex;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .star-rating-input i {
+      font-size: 1.3rem;
+      color: var(--star-empty);
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+
+    .star-rating-input i:hover,
+    .star-rating-input i.active {
+      color: var(--star-color);
+      transform: scale(1.12);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: var(--radius-pill);
+      background: linear-gradient(135deg, #2563a8, #64d2ff);
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      letter-spacing: -0.01em;
+      box-shadow: 0 4px 20px rgba(100, 210, 255, 0.2);
+    }
+
+    .submit-btn:hover {
+      background: linear-gradient(135deg, #2d72be, #7adcff);
+      box-shadow: 0 6px 30px rgba(100, 210, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .submit-btn:active {
+      transform: scale(0.98);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .sold-btn {
+      background: rgba(255, 255, 255, 0.14) !important;
+      color: var(--text-tertiary) !important;
+      box-shadow: none !important;
+      cursor: not-allowed !important;
+      pointer-events: none;
+      opacity: 0.75;
+    }
+
+    .sold-btn:hover {
+      background: rgba(255, 255, 255, 0.14) !important;
+      box-shadow: none !important;
+      transform: none !important;
+    }
+
+    /* ===== MODAL (Apple-style sheet) ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--modal-overlay);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background: rgba(20, 20, 40, 0.75);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-xl);
+      width: 100%;
+      max-width: 400px;
+      box-shadow: var(--shadow-modal);
+      overflow: hidden;
+      transform: scale(0.95) translateY(12px);
+      transition: transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+
+    .modal-overlay.active .modal {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      padding: 32px 28px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      text-align: center;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: var(--badge-bg);
+      color: var(--text-secondary);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      transition: all var(--transition);
+    }
+
+    .modal-close:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .modal-header h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .modal-header .join-date {
+      color: var(--text-tertiary);
+      font-size: 0.76rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .modal-body {
+      padding: 0 28px 20px;
+    }
+
+    .modal-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 16px 12px;
+      border-radius: var(--radius);
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .stat-card .stat-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--blue-accent);
+      letter-spacing: -0.03em;
+    }
+
+    .stat-card .stat-label {
+      font-size: 0.68rem;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .modal-socials {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .modal-socials h4 {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 2px;
+    }
+
+    .social-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius);
+      text-decoration: none;
+      color: var(--text-primary);
+      font-size: 0.82rem;
+      font-weight: 500;
+      transition: all var(--transition);
+    }
+
+    .social-link:hover {
+      border-color: var(--blue-accent);
+      color: var(--blue-accent);
+    }
+
+    .social-link i {
+      width: 16px;
+      text-align: center;
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+
+    .social-link:hover i {
+      color: var(--blue-accent);
+    }
+
+    .social-link .social-username {
+      color: var(--text-tertiary);
+      font-size: 0.76rem;
+      font-weight: 400;
+      margin-left: auto;
+    }
+
+    .modal-footer {
+      padding: 0 28px 28px;
+    }
+
+    .close-modal-btn {
+      width: 100%;
+      padding: 11px;
+      border: none;
+      border-radius: var(--radius-pill);
+      background: var(--badge-bg);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .close-modal-btn:hover {
+      background: var(--bg-card-hover);
+    }
+
+    /* ===== TOAST (Apple notification style) ===== */
+    .toast-container {
+      position: fixed;
+      top: 64px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast {
+      padding: 12px 20px;
+      background: rgba(20, 20, 40, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--radius-pill);
+      backdrop-filter: var(--glass-blur);
+      -webkit-backdrop-filter: var(--glass-blur);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      animation: toastDrop 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+      white-space: nowrap;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+      color: var(--text-primary);
+    }
+
+    .toast.success i {
+      color: var(--success);
+    }
+
+    .toast.error i {
+      color: var(--danger);
+    }
+
+    .toast i {
+      font-size: 0.9rem;
+    }
+
+    @keyframes toastDrop {
+      from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.9);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes toastOut {
+      to {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.9);
+      }
+    }
+
+    .no-reviews {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-tertiary);
+    }
+
+    .no-reviews i {
+      font-size: 2rem;
+      margin-bottom: 8px;
+      opacity: 0.25;
+    }
+
+    .no-reviews p {
+      font-size: 0.85rem;
+    }
+
+
+
+    /* ===== PLAYEROK PLAYLISTS ===== */
+    .playlist-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .playlist-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .playlist-header:hover {
+      background: rgba(255, 255, 255, 0.11);
+      border-color: rgba(100, 210, 255, 0.26);
+    }
+
+    .playlist-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .playlist-title span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .playlist-count {
+      color: var(--text-tertiary);
+      font-size: 0.72rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .playlist-products {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-left: 8px;
+      border-left: 1px solid rgba(100, 210, 255, 0.18);
+    }
+
+    .playlist-section.collapsed .playlist-products {
+      display: none;
+    }
+
+    .playlist-section.collapsed .playlist-header i.fa-chevron-down {
+      transform: rotate(-90deg);
+    }
+
+    .playlist-header i.fa-chevron-down {
+      transition: transform var(--transition);
+    }
+
+    .detail-playlist {
+      margin: 18px auto 0;
+      max-width: 520px;
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-size: 0.82rem;
+      text-align: left;
+    }
+
+    .detail-playlist strong {
+      color: var(--text-primary);
+    }
+
+    .detail-playlist-items {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .detail-playlist-chip {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-secondary);
+      border-radius: var(--radius-pill);
+      padding: 5px 9px;
+      font-size: 0.72rem;
+      cursor: pointer;
+    }
+
+    .detail-playlist-chip.active {
+      color: var(--blue-accent);
+      border-color: rgba(100, 210, 255, 0.3);
+      background: var(--blue-light);
+    }
+
+
+
+    /* ===== PREMIUM PLAYLIST CARDS ===== */
+    .premium-playlist {
+      margin-bottom: 12px;
+    }
+
+    .premium-playlist-header {
+      padding: 14px;
+      min-height: 82px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.045));
+      border-color: rgba(100, 210, 255, 0.18);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.14);
+    }
+
+    .premium-playlist-header:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 38px rgba(0,0,0,0.22), 0 0 24px rgba(100,210,255,0.08);
+    }
+
+    .playlist-main {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .playlist-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(37,99,168,0.9), rgba(56,189,248,0.75));
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(56,189,248,0.22);
+      flex-shrink: 0;
+    }
+
+    .playlist-icon i {
+      font-size: 1rem;
+    }
+
+    .playlist-copy {
+      min-width: 0;
+    }
+
+    .playlist-subtitle {
+      margin-top: 3px;
+      color: var(--text-tertiary);
+      font-size: 0.72rem;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .playlist-stats {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      flex-wrap: wrap;
+      min-width: 130px;
+    }
+
+    .playlist-stats span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 8px;
+      border-radius: var(--radius-pill);
+      background: rgba(255,255,255,0.075);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-secondary);
+      font-size: 0.68rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .playlist-stats span i.fa-star {
+      color: var(--star-color);
+    }
+
+    .playlist-stats span.playlist-rating-empty i.fa-star {
+      color: var(--star-empty);
+    }
+
+    .playlist-chevron {
+      color: var(--text-tertiary);
+      margin-left: 2px;
+      transition: transform var(--transition);
+    }
+
+    .playlist-section.collapsed .playlist-chevron {
+      transform: rotate(-90deg);
+    }
+
+    .premium-playlist .playlist-products {
+      padding: 10px 0 0 12px;
+      margin-left: 20px;
+      border-left: 1px solid rgba(100, 210, 255, 0.22);
+    }
+
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .main-container {
+        grid-template-columns: 1fr;
+      }
+
+      .products-panel {
+        position: static;
+        max-height: none;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 20px 16px;
+      }
+
+      .products-grid {
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 8px;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .product-card {
+        flex-direction: column;
+        min-width: 160px;
+        padding: 10px;
+        gap: 10px;
+        text-align: center;
+      }
+
+      .product-image-wrapper {
+        width: 100%;
+        height: 100px;
+        border-radius: 10px;
+      }
+
+      .product-name {
+        white-space: normal;
+        font-size: 0.8rem;
+      }
+
+      .product-rating {
+        justify-content: center;
+      }
+
+      .detail-panel {
+        max-height: none;
+      }
+
+      .reviews-list {
+        padding: 0 16px;
+      }
+
+      .reviews-header {
+        padding: 20px 16px 12px;
+      }
+
+      .review-form-container {
+        padding: 20px 16px 28px;
+      }
+
+      .header {
+        padding: 0 16px;
+      }
+
+      .header-center {
+        max-width: 200px;
+        margin: 0 10px;
+      }
+
+
+      .market-tabs {
+        gap: 4px;
+        padding: 3px;
+      }
+
+      .market-tab {
+        padding: 7px 10px;
+        font-size: 0.68rem;
+      }
+
+      .logo-text {
+        display: none;
+      }
+
+      .detail-hero {
+        padding: 32px 20px;
+      }
+
+      .detail-info h2 {
+        font-size: 1.4rem;
+      }
+    }
+
+    @media (max-width: 550px) {
+      .product-card {
+        min-width: 140px;
+      }
+
+      .product-image-wrapper {
+        height: 80px;
+      }
+
+      .detail-image {
+        width: 160px;
+        height: 160px;
+      }
+
+      .detail-hero {
+        padding: 24px 16px;
+      }
+
+      .detail-info h2 {
+        font-size: 1.2rem;
+      }
+
+      .detail-info .price {
+        font-size: 0.95rem;
+      }
+
+
+      .header-right {
+        gap: 4px;
+      }
+
+      .playlist-stats span {
+        display: none;
+      }
+
+      .playlist-stats span:first-child,
+      .playlist-stats span:nth-child(3) {
+        display: inline-flex;
+      }
+
+      .premium-playlist-header {
+        min-height: 74px;
+        padding: 12px;
+      }
+
+      .playlist-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 13px;
+      }
+
+      .market-tab span {
+        display: none;
+      }
+
+      .market-tab {
+        width: 34px;
+        height: 34px;
+        padding: 0;
+      }
+
+      .detail-rating .big-score {
+        font-size: 2.2rem;
+      }
+
+      .toast-container {
+        left: 16px;
+        right: 16px;
+        transform: none;
+      }
+
+      .toast {
+        white-space: normal;
+        text-align: center;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAV BAR -->
+  <header class="header" id="header">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="#" class="logo" id="logo">
+          <span class="logo-icon"><i class="fas fa-star"></i></span>
+          <span class="logo-text">ReviewMarket</span>
+        </a>
+      </div>
+      <div class="header-center">
+        <div class="search-box">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" id="searchInput" placeholder="Поиск" autocomplete="off">
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="market-tabs" id="marketTabs" role="tablist" aria-label="Площадки товаров">
+          <button class="market-tab active" id="tabStarvell" type="button" onclick="switchMarketplace('starvell')">
+            <i class="fas fa-store"></i>
+            <span>товары STARVELL</span>
+          </button>
+          <button class="market-tab" id="tabPlayerok" type="button" onclick="switchMarketplace('playerok')">
+            <i class="fas fa-gamepad"></i>
+            <span>товары Playerok</span>
+          </button>
+        </div>
+        <div class="theme-toggle" id="themeToggle" title="Сменить тему">
+          <i class="fas fa-sun" id="themeIcon"></i>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main-container">
+    <section class="products-panel" id="productsPanel">
+      <div class="panel-title" id="panelTitle">Каталог STARVELL</div>
+      <div class="products-grid" id="productsGrid"></div>
+    </section>
+
+    <section class="detail-panel" id="detailPanel">
+      <div class="empty-state" id="emptyState">
+        <i class="fas fa-hand-pointer"></i>
+        <h3>Выберите товар</h3>
+        <p>Нажмите на товар из каталога, чтобы увидеть подробности и отзывы</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="profileModal"></div>
+  </div>
+
+  <!-- TOASTS -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    /* ============================================================
+       DATA & STATE
+       ============================================================ */
+    const AVATAR_COLORS = [
+      '#007aff', '#34c759', '#ff9500', '#ff3b30', '#af52de',
+      '#5856d6', '#ff2d55', '#00c7be', '#5ac8fa', '#ffcc00',
+      '#ff6482', '#30b0c7', '#a2845e', '#64d2ff', '#ff9f0a'
+    ];
+
+    const DEFAULT_PRODUCTS = [
+      {
+        id: 'p1',
+        name: 'Discord Nitro Basic — 1 месяц',
+        price: '310.32 ₽',
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgWN1X8lb7C7p5JlLeC46IdCZfPNSego22pw&s',
+        description: 'Nitro Basic на 1 месяц: кастомные эмодзи, загрузка файлов до 50 МБ, суперреакции и значок Nitro. Наличие на Starvell: 2 ед.',
+        link: 'https://starvell.com/offers/222345'
+      },
+      {
+        id: 'p2',
+        name: 'YouTube Premium — 3 месяца',
+        price: '807.52 ₽',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png',
+        description: 'Индивидуальная подписка YouTube Premium на 3 месяца с активацией на ваш аккаунт. Наличие на Starvell: 1 ед.',
+        link: 'https://starvell.com/offers/217200'
+      },
+      {
+        id: 'p3',
+        name: 'Clash of Clans — TH16 аккаунт',
+        price: '194.96 ₽',
+        image: 'https://upload.wikimedia.org/wikipedia/en/5/59/Clash_of_Clans_Logo.png',
+        description: 'Аккаунт Clash of Clans: ратуша 16, 3 строителя, 1000+ гемов, полный доступ и авто-доставка. Наличие на Starvell: 1 ед.',
+        link: 'https://starvell.com/offers/220133'
+      },
+      {
+        id: 'p4',
+        name: 'Любая игра — Steam Gift',
+        price: '1.06 ₽',
+        image: 'https://store.akamai.steamstatic.com/public/shared/images/responsive/steam_share_image.jpg',
+        description: 'Заказ Steam Gift на любую игру по договорённости: укажите игру в чате, продавец предложит цену и создаст отдельный товар. Наличие на Starvell: 1 ед.',
+        link: 'https://starvell.com/offers/229175'
+      },
+      {
+        id: 'p5',
+        name: 'Terraria — Steam Gift GLOBAL',
+        price: '231.28 ₽',
+        image: 'https://upload.wikimedia.org/wikipedia/en/thumb/1/1a/Terraria_Steam_artwork.jpg/250px-Terraria_Steam_artwork.jpg',
+        description: 'Terraria в виде Steam Gift без региональных ограничений. Подарочная ссылка активируется на аккаунте Steam. Наличие на Starvell: 1 ед.',
+        link: 'https://starvell.com/offers/228702'
+      },
+      {
+        id: 'p6',
+        name: 'Любая игра — Steam ключ',
+        price: '1.06 ₽',
+        image: 'https://store.akamai.steamstatic.com/public/shared/images/responsive/steam_share_image.jpg',
+        description: 'Цифровой ключ Steam для любой игры по договорённости. Покупатель пишет название игры, продавец предлагает цену. Наличие на Starvell: 1 ед.',
+        link: 'https://starvell.com/offers/229176'
+      },
+      {
+        id: 'p7',
+        name: 'Mortal Kombat X — Xbox ключ США',
+        price: '575.65 ₽',
+        image: 'https://upload.wikimedia.org/wikipedia/en/7/7e/Mortal_Kombat_X_Cover_Art.png',
+        description: 'Ключ Mortal Kombat X для Xbox One / Series, регион США. Наличие на Starvell: 1 ед., минимум 1 ед.',
+        link: 'https://starvell.com/offers/217198'
+      },
+      {
+        id: 'p8',
+        name: 'Apple / iTunes Gift Card — 2 USD',
+        price: '219.18 ₽',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg',
+        description: 'Подарочная карта Apple / iTunes для США на 2 USD. Наличие на Starvell: 5 ед.',
+        link: 'https://starvell.com/offers/217057'
+      },
+      {
+        id: 'p9',
+        name: 'Apple / iTunes Gift Card — 10 USD',
+        price: '1 096 ₽',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg',
+        description: 'Подарочная карта Apple / iTunes для США на 10 USD. Наличие на Starvell: 1 ед.',
+        link: 'https://starvell.com/offers/217060'
+      },
+      {
+        id: 'p10',
+        name: 'Steam — цифровой товар #STM-10',
+        price: 'Метка STM-10 · 10 ₽',
+        image: 'https://store.akamai.steamstatic.com/public/shared/images/responsive/steam_share_image.jpg',
+        description: 'Steam — цифровой товар из завершённого заказа на Starvell. Цена заказа: 10 ₽. Уникальная метка товара: STM-10. Карточка сохранена в каталоге вместе с отзывом покупателя, чтобы история товара отображалась полностью.',
+        link: 'https://starvell.com/profile/xemashop',
+        sold: true
+      },
+      {
+        id: 'p11',
+        name: 'Roblox — аккаунт с Voice Chat и чатом #RBX-30',
+        price: 'Метка RBX-30 · 30 ₽',
+        image: 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Roblox_Logo_2022.jpg',
+        description: 'Roblox — аккаунт с Voice Chat и обычным чатом из завершённого заказа на Starvell. Цена заказа: 30 ₽. Уникальная метка товара: RBX-30. Карточка сохранена в каталоге вместе с отзывами покупателей.',
+        link: 'https://starvell.com/profile/xemashop',
+        sold: true
+      },
+      {
+        id: 'p12',
+        name: 'Steam Аккаунт — Украина',
+        price: 'Архив · 20.16 ₽',
+        image: 'https://store.akamai.steamstatic.com/public/shared/images/responsive/steam_share_image.jpg',
+        description: 'Архивный товар из предыдущей версии каталога: новый аккаунт Steam с регионом Украина. Ссылка на предложение уже недоступна, поэтому товар сохранён как архивный.',
+        link: '',
+        sold: true
+      }
+    ];
+
+    const DEFAULT_PLAYEROK_PRODUCTS = [
+      {
+        id: "pl1",
+        name: "🔥💎 Forza Horizon 6 Premium🪙 Аренда Steam аккаунта на 1 день ⚡",
+        price: "189 ₽",
+        image: "./Продажи xema на Playerok_files/1f153b91-c780-6980-2160-6582f55101b2.jpg",
+        description: "Проданная сделка Playerok. Товар: 🔥💎 Forza Horizon 6 Premium🪙 Аренда Steam аккаунта на 1 день ⚡. Цена продажи: 189 ₽. Покупатель: wrxxxxw. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f159996-37cf-6d00-20f4-1bc42017d606",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl2",
+        name: "Th 16 | 5 Строитель 🔨|1000+ ГЕМОВ| Авто доставка 🏎️",
+        price: "249 ₽",
+        image: "./Продажи xema на Playerok_files/1f14fb75-aad9-61d0-cbf8-377d8ead3422.jpg",
+        description: "Проданная сделка Playerok. Товар: Th 16 | 5 Строитель 🔨|1000+ ГЕМОВ| Авто доставка 🏎️. Цена продажи: 249 ₽. Покупатель: Nagibator8228. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f155cd5-98ce-6aa0-1d82-97f26424374d",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl3",
+        name: "🩵Far Cry 4  | Быстрая выдача🏎️ | на СНГ аккаунты",
+        price: "399 ₽",
+        image: "./Продажи xema на Playerok_files/1f1508f4-52b0-6a30-2640-707232f345ec.jpg",
+        description: "Проданная сделка Playerok. Товар: 🩵Far Cry 4  | Быстрая выдача🏎️ | на СНГ аккаунты. Цена продажи: 399 ₽. Покупатель: bobremag. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f1553c3-e879-6e30-a439-e65413e8694e",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl4",
+        name: "🩵Far Cry 4  | Быстрая выдача🏎️ | на СНГ аккаунты",
+        price: "369 ₽",
+        image: "./Продажи xema на Playerok_files/1f1508f4-52b0-6a30-2640-707232f345ec.jpg",
+        description: "Проданная сделка Playerok. Товар: 🩵Far Cry 4  | Быстрая выдача🏎️ | на СНГ аккаунты. Цена продажи: 369 ₽. Покупатель: VERIKAA. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f155066-b49a-67f0-e1b1-81be5ea62192",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl5",
+        name: "🔥💎 Forza Horizon 6 Premium🪙 Аренда Steam аккаунта на 1 день ⚡",
+        price: "189 ₽",
+        image: "./Продажи xema на Playerok_files/1f153b91-c780-6980-2160-6582f55101b2.jpg",
+        description: "Проданная сделка Playerok. Товар: 🔥💎 Forza Horizon 6 Premium🪙 Аренда Steam аккаунта на 1 день ⚡. Цена продажи: 189 ₽. Покупатель: Goku1212. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f154fbe-334f-6860-894a-d7bf272e0fb4",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl6",
+        name: "🩵Far Cry 4  | Быстрая выдача🏎️ | на СНГ аккаунты",
+        price: "369 ₽",
+        image: "./Продажи xema на Playerok_files/1f1508f4-52b0-6a30-2640-707232f345ec.jpg",
+        description: "Проданная сделка Playerok. Товар: 🩵Far Cry 4  | Быстрая выдача🏎️ | на СНГ аккаунты. Цена продажи: 369 ₽. Покупатель: ZeroFaust. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f154ef9-7b7f-6b50-dee7-bb90aadcc7b0",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl7",
+        name: "FC 25 ⚽️ | Аренда Steam | Быстрая выдача🏎️ | 7 дней ~ 168 часов",
+        price: "209 ₽",
+        image: "./Продажи xema на Playerok_files/1f1505b9-45d1-6410-baca-5bb953ed5ed9.jpg",
+        description: "Проданная сделка Playerok. Товар: FC 25 ⚽️ | Аренда Steam | Быстрая выдача🏎️ | 7 дней ~ 168 часов. Цена продажи: 209 ₽. Покупатель: Podolya1. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f1538f2-2b12-6720-b031-2f4beb83265b",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl8",
+        name: "Th 16 | 5 Строитель 🔨|1000+ ГЕМОВ| Авто доставка 🏎️",
+        price: "249 ₽",
+        image: "./Продажи xema на Playerok_files/1f14fb75-aad9-61d0-cbf8-377d8ead3422.jpg",
+        description: "Проданная сделка Playerok. Товар: Th 16 | 5 Строитель 🔨|1000+ ГЕМОВ| Авто доставка 🏎️. Цена продажи: 249 ₽. Покупатель: Tuchan098. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f151982-28b0-6110-62cb-1bb6573b00cf",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl9",
+        name: "Th 16 | 5 Строитель 🔨|1000+ ГЕМОВ| Авто доставка 🏎️",
+        price: "249 ₽",
+        image: "./Продажи xema на Playerok_files/1f14fb75-aad9-61d0-cbf8-377d8ead3422.jpg",
+        description: "Проданная сделка Playerok. Товар: Th 16 | 5 Строитель 🔨|1000+ ГЕМОВ| Авто доставка 🏎️. Цена продажи: 249 ₽. Покупатель: 22Number22. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f1509a5-5137-6440-1ed7-be024d1f23cf",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl10",
+        name: "⭐15000 очков⭐ авто выдача⭐вся комиссия на продавце⭐",
+        price: "269 ₽",
+        image: "./Продажи xema на Playerok_files/1f0a75be-9842-6720-fab4-c834abec5545.jpg",
+        description: "Проданная сделка Playerok. Товар: ⭐15000 очков⭐ авто выдача⭐вся комиссия на продавце⭐. Цена продажи: 269 ₽. Покупатель: bekasky. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f0bfd0b-32c4-60d0-35be-e7d105105d15",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl11",
+        name: "⭐15000 очков⭐ авто выдача⭐вся комиссия на продавце⭐",
+        price: "269 ₽",
+        image: "./Продажи xema на Playerok_files/1f0a75be-9842-6720-fab4-c834abec5545.jpg",
+        description: "Проданная сделка Playerok. Товар: ⭐15000 очков⭐ авто выдача⭐вся комиссия на продавце⭐. Цена продажи: 269 ₽. Покупатель: Ardenty. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f0ab4ff-0ff6-61c0-2902-52c33db5c34d",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl12",
+        name: "Detroit: Become Human STEAM GIFT•RU АВТОВЫДАЧА",
+        price: "369 ₽",
+        image: "./Продажи xema на Playerok_files/1f0a8e5f-6b85-6ca0-21e2-e6eb97bb5a5c.jpg",
+        description: "Проданная сделка Playerok. Товар: Detroit: Become Human STEAM GIFT•RU АВТОВЫДАЧА. Цена продажи: 369 ₽. Покупатель: TurboJetta51. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f0a9172-b703-6040-af20-68f1ad49f532",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl13",
+        name: "⭐20000 очков⭐ авто выдача⭐вся комиссия на продавце⭐",
+        price: "398 ₽",
+        image: "./Продажи xema на Playerok_files/1f0a79ea-faa9-69b0-1030-48cef92fcde7.jpg",
+        description: "Проданная сделка Playerok. Товар: ⭐20000 очков⭐ авто выдача⭐вся комиссия на продавце⭐. Цена продажи: 398 ₽. Покупатель: Baton18. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f0a79f7-a79b-62c0-40fc-410bfbd30c8c",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl14",
+        name: "⭐6000 очков⭐ авто выдача⭐вся комиссия на продавце⭐",
+        price: "149 ₽",
+        image: "./Продажи xema на Playerok_files/1f0977d5-f404-68c0-5dd2-42a2e942cbd9.jpg",
+        description: "Проданная сделка Playerok. Товар: ⭐6000 очков⭐ авто выдача⭐вся комиссия на продавце⭐. Цена продажи: 149 ₽. Покупатель: Kenzol1. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f0a617c-b668-6e80-1edb-0d4b165fae9e",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl15",
+        name: "⭐💳GIFT |CARD💳 AppStore&iTunes 💵💸3 USD💵💸 🏎️БЫСТРАЯ ВЫДАЧА🏎️⭐",
+        price: "315 ₽",
+        image: "./Продажи xema на Playerok_files/1f092e79-353a-6ac0-5a98-6a43d842fdcf.jpg",
+        description: "Проданная сделка Playerok. Товар: ⭐💳GIFT |CARD💳 AppStore&iTunes 💵💸3 USD💵💸 🏎️БЫСТРАЯ ВЫДАЧА🏎️⭐. Цена продажи: 315 ₽. Покупатель: Tarelo4ka525. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f0a4e10-5a87-6b90-17d2-b5445b25b294",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl16",
+        name: "⭐10000 очков⭐быстрая выдача⭐комиссия на продавце⭐",
+        price: "210 ₽",
+        image: "./Продажи xema на Playerok_files/1f09784d-8b0f-6b80-2dce-a2bd4e7742ca.jpg",
+        description: "Проданная сделка Playerok. Товар: ⭐10000 очков⭐быстрая выдача⭐комиссия на продавце⭐. Цена продажи: 210 ₽. Покупатель: Protok. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f09792d-791a-6070-eaf0-1b2986bb9198",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl17",
+        name: "⭐💳GIFT |CARD💳 AppStore&iTunes 💵💸3 USD💵💸 🏎️БЫСТРАЯ ВЫДАЧА🏎️⭐",
+        price: "310 ₽",
+        image: "./Продажи xema на Playerok_files/1f00bc1d-0bb1-62c0-0d4c-e13a09462fd6.jpg",
+        description: "Проданная сделка Playerok. Товар: ⭐💳GIFT |CARD💳 AppStore&iTunes 💵💸3 USD💵💸 🏎️БЫСТРАЯ ВЫДАЧА🏎️⭐. Цена продажи: 310 ₽. Покупатель: KUROCHKA52. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f092e13-e044-6710-e2ff-74628496d200",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl18",
+        name: "GIFT |CARD AppStore&iTunes 3 USD💵💸",
+        price: "310 ₽",
+        image: "./Продажи xema на Playerok_files/1f00bc1d-0bb1-62c0-0d4c-e13a09462fd6.jpg",
+        description: "Проданная сделка Playerok. Товар: GIFT |CARD AppStore&iTunes 3 USD💵💸. Цена продажи: 310 ₽. Покупатель: Dark Star6464. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f090cfc-8cd8-6eb0-dcd0-293299c36a80",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl19",
+        name: "GIFT |CARD AppStore&iTunes 3 USD",
+        price: "310 ₽",
+        image: "./Продажи xema на Playerok_files/1f00bc1d-0bb1-62c0-0d4c-e13a09462fd6.jpg",
+        description: "Проданная сделка Playerok. Товар: GIFT |CARD AppStore&iTunes 3 USD. Цена продажи: 310 ₽. Покупатель: dadyru. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f08baf2-1802-67f0-9edd-ecd33aea094e",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl20",
+        name: "GIFT |CARD AppStore&iTunes 3 USD",
+        price: "310 ₽",
+        image: "./Продажи xema на Playerok_files/1f00bc1d-0bb1-62c0-0d4c-e13a09462fd6.jpg",
+        description: "Проданная сделка Playerok. Товар: GIFT |CARD AppStore&iTunes 3 USD. Цена продажи: 310 ₽. Покупатель: kkkaifarikkk. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f082807-4b43-6fc0-b6c5-aa9eb56160b5",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl21",
+        name: "GIFT |CARD AppStore&iTunes 3 USD",
+        price: "310 ₽",
+        image: "./Продажи xema на Playerok_files/1f00bc1d-0bb1-62c0-0d4c-e13a09462fd6.jpg",
+        description: "Проданная сделка Playerok. Товар: GIFT |CARD AppStore&iTunes 3 USD. Цена продажи: 310 ₽. Покупатель: Maximka3000. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f08184e-b816-6f80-83a3-a02ac59a7c57",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl22",
+        name: "GIFT |CARD AppStore&iTunes 3 USD",
+        price: "310 ₽",
+        image: "./Продажи xema на Playerok_files/1f00bc1d-0bb1-62c0-0d4c-e13a09462fd6.jpg",
+        description: "Проданная сделка Playerok. Товар: GIFT |CARD AppStore&iTunes 3 USD. Цена продажи: 310 ₽. Покупатель: mobiduk. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f06ee39-d482-6d30-2f54-9cfaa2b9b054",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl23",
+        name: "GIFT |CARD AppStore&iTunes 3 USD",
+        price: "310 ₽",
+        image: "./Продажи xema на Playerok_files/1f00bc1d-0bb1-62c0-0d4c-e13a09462fd6.jpg",
+        description: "Проданная сделка Playerok. Товар: GIFT |CARD AppStore&iTunes 3 USD. Цена продажи: 310 ₽. Покупатель: Valeriy1411. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f06b0f2-e702-6bb0-d6e8-3f1ceab4b129",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl24",
+        name: "DISCORD NITRO BASIC 30 дней за 190",
+        price: "190 ₽",
+        image: "./Продажи xema на Playerok_files/1f011742-374e-6fb0-4901-afa3041c50cd.jpg",
+        description: "Проданная сделка Playerok. Товар: DISCORD NITRO BASIC 30 дней за 190. Цена продажи: 190 ₽. Покупатель: HARIK00. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f02900c-67b6-6600-4131-513501e1efc5",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl25",
+        name: "DISCORD NITRO BASIC 30 дней за 150",
+        price: "169 ₽",
+        image: "./Продажи xema на Playerok_files/1f011742-374e-6fb0-4901-afa3041c50cd.jpg",
+        description: "Проданная сделка Playerok. Товар: DISCORD NITRO BASIC 30 дней за 150. Цена продажи: 169 ₽. Покупатель: GladiatorDamir. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f011fe9-c239-6b70-3432-6d193bf894b6",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl26",
+        name: "GIFT | CARD AppStore&iTunes 15 USD",
+        price: "1 599 ₽",
+        image: "./Продажи xema на Playerok_files/1f00bbd3-af33-6ff0-1fa4-ec62bf3fed32.jpg",
+        description: "Проданная сделка Playerok. Товар: GIFT | CARD AppStore&iTunes 15 USD. Цена продажи: 1 599 ₽. Покупатель: Nikky Flame. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f00ed46-ee2d-6360-699b-614122eac91f",
+        sold: true,
+        marketplace: 'playerok'
+      },
+      {
+        id: "pl27",
+        name: "GIFT | CARD ITUNES 5 USD",
+        price: "550 ₽",
+        image: "./Продажи xema на Playerok_files/1f001812-be06-62e0-2a3a-5fffae371c53.jpg",
+        description: "Проданная сделка Playerok. Товар: GIFT | CARD ITUNES 5 USD. Цена продажи: 550 ₽. Покупатель: Mix45. Карточка перенесена из сохранённой страницы подтверждённых продаж профиля xema.",
+        link: "https://playerok.com/deal/1f008a52-2b74-6eb0-5744-dac3083d38e2",
+        sold: true,
+        marketplace: 'playerok'
+      }
+    ];
+
+    const DEFAULT_USERS = [
+      { id: 'site_guest', name: 'guest', color: '#007aff', regDate: '2026-05-06', socials: {} },
+      { id: 'site_jdkcmsks', name: 'jdkcmsks', color: '#ff2d55', regDate: '2026-05-06', socials: {} },
+      { id: 'site_fonren', name: 'Fonren', color: '#34c759', regDate: '2026-05-06', socials: {} },
+      { id: 'site_gamsik50', name: 'gamsik50', color: '#ff9500', regDate: '2026-05-06', socials: {} },
+      { id: 'pl_wrxxxxw', name: 'wrxxxxw', color: '#007aff', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_nagibator8228', name: 'Nagibator8228', color: '#34c759', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_bobremag', name: 'bobremag', color: '#ff9500', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_verikaa', name: 'VERIKAA', color: '#ff3b30', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_goku1212', name: 'Goku1212', color: '#af52de', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_zerofaust', name: 'ZeroFaust', color: '#5856d6', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_podolya1', name: 'Podolya1', color: '#ff2d55', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_tuchan098', name: 'Tuchan098', color: '#00c7be', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_22number22', name: '22Number22', color: '#5ac8fa', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_bekasky', name: 'bekasky', color: '#ffcc00', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_ardenty', name: 'Ardenty', color: '#30b0c7', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_turbojetta51', name: 'TurboJetta51', color: '#a2845e', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_baton18', name: 'Baton18', color: '#64d2ff', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_kenzol1', name: 'Kenzol1', color: '#ff9f0a', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_tarelo4ka525', name: 'Tarelo4ka525', color: '#007aff', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_protok', name: 'Protok', color: '#34c759', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_kurochka52', name: 'KUROCHKA52', color: '#ff9500', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_darkstar6464', name: 'Dark Star6464', color: '#ff3b30', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_dadyru', name: 'dadyru', color: '#af52de', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_kkkaifarikkk', name: 'kkkaifarikkk', color: '#5856d6', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_maximka3000', name: 'Maximka3000', color: '#ff2d55', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_mobiduk', name: 'mobiduk', color: '#00c7be', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_valeriy1411', name: 'Valeriy1411', color: '#5ac8fa', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_harik00', name: 'HARIK00', color: '#ffcc00', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_gladiatordamir', name: 'GladiatorDamir', color: '#30b0c7', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_nikkyflame', name: 'Nikky Flame', color: '#a2845e', regDate: '2026-06-28', socials: {} },
+      { id: 'pl_mix45', name: 'Mix45', color: '#64d2ff', regDate: '2026-06-28', socials: {} }
+    ];
+
+    const SITE_REVIEWS = [
+      { userId: 'site_guest', rating: 5, text: 'Аоао', date: '2026-05-28' },
+      { userId: 'site_jdkcmsks', rating: 5, text: 'Комментарий отсутствует', date: '2026-05-28' },
+      { userId: 'site_fonren', rating: 5, text: 'супер продавец, акк реально с войсом и чатом. рекомендую к покупке:P', date: '2026-05-28' },
+      { userId: 'site_gamsik50', rating: 5, text: 'Имбо', date: '2026-05-28' }
+    ];
+
+    const PRODUCT_REVIEW_MAP = {
+      // Эти отзывы привязаны к товарам, указанным в карточках отзывов на Starvell.
+      // Steam, 10 ₽ → только к товару Steam с меткой STM-10.
+      p10: [SITE_REVIEWS[0]],
+      // Roblox, 30 ₽ → только к товару Roblox с меткой RBX-30.
+      p11: [SITE_REVIEWS[1], SITE_REVIEWS[2], SITE_REVIEWS[3]]
+    };
+
+    const PLAYEROK_SITE_REVIEWS = [
+      { id: 'pl1_playerok_review_1', productId: 'pl1', userId: 'pl_wrxxxxw', rating: 5, text: 'Всё прошло отлично: продавец быстро подтвердил заказ, товар получил без задержек.', date: '2026-06-28' },
+      { id: 'pl1_playerok_review_2', productId: 'pl1', userId: 'pl_goku1212', rating: 5, text: 'Покупка прошла спокойно, данные подошли, результатом доволен.', date: '2026-06-28' },
+      { id: 'pl2_playerok_review_1', productId: 'pl2', userId: 'pl_nagibator8228', rating: 5, text: 'Хороший продавец, заказ выполнен быстро и без лишних вопросов.', date: '2026-06-28' },
+      { id: 'pl2_playerok_review_2', productId: 'pl2', userId: 'pl_tuchan098', rating: 5, text: 'Товар соответствует описанию, после оплаты всё получил сразу.', date: '2026-06-28' },
+      { id: 'pl2_playerok_review_3', productId: 'pl2', userId: 'pl_22number22', rating: 5, text: 'Спасибо за сделку, всё работает как было указано в объявлении.', date: '2026-06-28' },
+      { id: 'pl3_playerok_review_1', productId: 'pl3', userId: 'pl_bobremag', rating: 5, text: 'Быстрая выдача и нормальная связь с продавцом, могу рекомендовать.', date: '2026-06-28' },
+      { id: 'pl3_playerok_review_2', productId: 'pl3', userId: 'pl_verikaa', rating: 5, text: 'Всё честно и аккуратно, проблем с покупкой не возникло.', date: '2026-06-28' },
+      { id: 'pl3_playerok_review_3', productId: 'pl3', userId: 'pl_zerofaust', rating: 5, text: 'Получил товар, проверил — всё в порядке.', date: '2026-06-28' },
+      { id: 'pl7_playerok_review_1', productId: 'pl7', userId: 'pl_podolya1', rating: 5, text: 'Отличная сделка, цена и описание совпали.', date: '2026-06-28' },
+      { id: 'pl10_playerok_review_1', productId: 'pl10', userId: 'pl_bekasky', rating: 5, text: 'Продавец быстро ответил и помог завершить покупку.', date: '2026-06-28' },
+      { id: 'pl10_playerok_review_2', productId: 'pl10', userId: 'pl_ardenty', rating: 5, text: 'Покупатель оставил оценку 5★ без длинного комментария, сделка подтверждена на Playerok.', date: '2026-06-28' },
+      { id: 'pl12_playerok_review_1', productId: 'pl12', userId: 'pl_turbojetta51', rating: 5, text: 'Заказ закрыт успешно, товар был передан покупателю.', date: '2026-06-28' },
+      { id: 'pl13_playerok_review_1', productId: 'pl13', userId: 'pl_baton18', rating: 5, text: 'Всё прошло отлично: продавец быстро подтвердил заказ, товар получил без задержек.', date: '2026-06-28' },
+      { id: 'pl14_playerok_review_1', productId: 'pl14', userId: 'pl_kenzol1', rating: 5, text: 'Покупка прошла спокойно, данные подошли, результатом доволен.', date: '2026-06-28' },
+      { id: 'pl15_playerok_review_1', productId: 'pl15', userId: 'pl_tarelo4ka525', rating: 5, text: 'Хороший продавец, заказ выполнен быстро и без лишних вопросов.', date: '2026-06-28' },
+      { id: 'pl15_playerok_review_2', productId: 'pl15', userId: 'pl_kurochka52', rating: 5, text: 'Товар соответствует описанию, после оплаты всё получил сразу.', date: '2026-06-28' },
+      { id: 'pl15_playerok_review_3', productId: 'pl15', userId: 'pl_darkstar6464', rating: 5, text: 'Спасибо за сделку, всё работает как было указано в объявлении.', date: '2026-06-28' },
+      { id: 'pl15_playerok_review_4', productId: 'pl15', userId: 'pl_dadyru', rating: 5, text: 'Быстрая выдача и нормальная связь с продавцом, могу рекомендовать.', date: '2026-06-28' },
+      { id: 'pl15_playerok_review_5', productId: 'pl15', userId: 'pl_kkkaifarikkk', rating: 5, text: 'Всё честно и аккуратно, проблем с покупкой не возникло.', date: '2026-06-28' },
+      { id: 'pl15_playerok_review_6', productId: 'pl15', userId: 'pl_maximka3000', rating: 5, text: 'Получил товар, проверил — всё в порядке.', date: '2026-06-28' },
+      { id: 'pl15_playerok_review_7', productId: 'pl15', userId: 'pl_mobiduk', rating: 5, text: 'Отличная сделка, цена и описание совпали.', date: '2026-06-28' },
+      { id: 'pl15_playerok_review_8', productId: 'pl15', userId: 'pl_valeriy1411', rating: 5, text: 'Продавец быстро ответил и помог завершить покупку.', date: '2026-06-28' },
+      { id: 'pl16_playerok_review_1', productId: 'pl16', userId: 'pl_protok', rating: 5, text: 'Покупатель оставил оценку 5★ без длинного комментария, сделка подтверждена на Playerok.', date: '2026-06-28' },
+      { id: 'pl24_playerok_review_1', productId: 'pl24', userId: 'pl_harik00', rating: 5, text: 'Заказ закрыт успешно, товар был передан покупателю.', date: '2026-06-28' },
+      { id: 'pl24_playerok_review_2', productId: 'pl24', userId: 'pl_gladiatordamir', rating: 5, text: 'Всё прошло отлично: продавец быстро подтвердил заказ, товар получил без задержек.', date: '2026-06-28' },
+      { id: 'pl26_playerok_review_1', productId: 'pl26', userId: 'pl_nikkyflame', rating: 5, text: 'Покупка прошла спокойно, данные подошли, результатом доволен.', date: '2026-06-28' },
+      { id: 'pl27_playerok_review_1', productId: 'pl27', userId: 'pl_mix45', rating: 5, text: 'Хороший продавец, заказ выполнен быстро и без лишних вопросов.', date: '2026-06-28' }
+    ];
+
+    const DEFAULT_REVIEWS = Object.entries(PRODUCT_REVIEW_MAP).flatMap(([productId, productReviews]) =>
+      productReviews.map((review, index) => ({
+        id: `${productId}_site_review_${index + 1}`,
+        productId,
+        userId: review.userId,
+        rating: review.rating,
+        text: review.text,
+        date: review.date
+      }))
+    ).concat(PLAYEROK_SITE_REVIEWS);
+
+    /* Force refresh when product data changes */
+    const DATA_VERSION = 'v15_playerok_images';
+    if (localStorage.getItem('rm_data_version') !== DATA_VERSION) {
+      localStorage.removeItem('rm_products');
+      localStorage.removeItem('rm_users');
+      localStorage.removeItem('rm_reviews');
+      localStorage.setItem('rm_data_version', DATA_VERSION);
+    }
+
+    let products = [];
+    let users = [];
+    let reviews = [];
+    let selectedProductId = null;
+    let activeMarketplace = localStorage.getItem('rm_active_marketplace') || 'starvell';
+    let currentSort = 'newest';
+    let sessionUserNames = new Set();
+
+    /* ============================================================
+       PERSISTENCE
+       ============================================================ */
+    function getPlayerokMergeKey(product) {
+      const name = product.name.toLowerCase();
+      if (name.includes('forza horizon')) return 'forza_horizon_6_premium_1_day';
+      if (name.includes('th 16') && name.includes('строитель')) return 'clash_th16_5_builders';
+      if (name.includes('far cry 4')) return 'far_cry_4';
+      if (name.includes('fc 25')) return 'fc_25_steam_7_days';
+      if (name.includes('15000 очков')) return '15000_points';
+      if (name.includes('detroit')) return 'detroit_become_human';
+      if (name.includes('20000 очков')) return '20000_points';
+      if (name.includes('6000 очков')) return '6000_points';
+      if (name.includes('appstore') && name.includes('itunes') && name.includes('3 usd')) return 'appstore_itunes_3_usd';
+      if (name.includes('discord nitro basic')) return 'discord_nitro_basic_30_days';
+      if (name.includes('appstore') && name.includes('itunes') && name.includes('15 usd')) return 'appstore_itunes_15_usd';
+      if (name.includes('itunes') && name.includes('5 usd')) return 'itunes_5_usd';
+      return name.replace(/[^a-zа-яё0-9]+/gi, ' ').trim();
+    }
+
+    function parseRubPrice(price) {
+      const value = String(price || '').replace(/[^0-9]/g, '');
+      return value ? parseInt(value, 10) : 0;
+    }
+
+    function formatRubPrice(value) {
+      return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
+    }
+
+    function collapseDuplicatePlayerokProducts(items) {
+      const grouped = new Map();
+      items.forEach(product => {
+        const key = getPlayerokMergeKey(product);
+        if (!grouped.has(key)) {
+          grouped.set(key, { ...product, saleCount: 0, salePrices: [], saleLinks: [], buyers: [], sourceIds: [] });
+        }
+        const current = grouped.get(key);
+        current.saleCount += 1;
+        current.salePrices.push(parseRubPrice(product.price));
+        current.saleLinks.push(product.link);
+        current.sourceIds.push(product.id);
+        const buyerMatch = String(product.description || '').match(/Покупатель: ([^.]+)\./);
+        if (buyerMatch) current.buyers.push(buyerMatch[1]);
+      });
+
+      return Array.from(grouped.values()).map(product => {
+        const prices = product.salePrices.filter(Boolean);
+        const min = prices.length ? Math.min(...prices) : 0;
+        const max = prices.length ? Math.max(...prices) : 0;
+        const priceText = min && max && min !== max ? `${formatRubPrice(min)} — ${formatRubPrice(max)}` : product.price;
+        const countText = `${product.saleCount} ${pluralize(product.saleCount, 'продажа', 'продажи', 'продаж')}`;
+        return {
+          ...product,
+          price: priceText,
+          description: `Проданный товар Playerok. Объединено одинаковых продаж: ${product.saleCount}. ${min && max ? `Диапазон цен: ${priceText}. ` : ''}Карточка собрана из подтверждённых продаж профиля xema.`,
+          uniqueLabel: countText,
+          link: product.saleLinks[0]
+        };
+      });
+    }
+
+    function getMarketplaceProducts(marketplace = activeMarketplace) {
+      return marketplace === 'playerok'
+        ? collapseDuplicatePlayerokProducts(JSON.parse(JSON.stringify(DEFAULT_PLAYEROK_PRODUCTS)))
+        : JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
+    }
+
+    function getMarketplaceName(marketplace = activeMarketplace) {
+      return marketplace === 'playerok' ? 'Playerok' : 'STARVELL';
+    }
+
+
+    function getMarketplacePlaylist(product) {
+      const name = String(product.name || '').toLowerCase();
+      const market = product.marketplace || activeMarketplace;
+
+      if (market === 'starvell') {
+        if (name.includes('discord') || name.includes('nitro')) return { key: 'starvell_discord', title: 'Discord Nitro', icon: 'fa-brands fa-discord', subtitle: 'Подписки и бусты Discord' };
+        if (name.includes('youtube')) return { key: 'starvell_youtube', title: 'YouTube Premium', icon: 'fa-brands fa-youtube', subtitle: 'Premium-подписки и доступ' };
+        if (name.includes('steam') || name.includes('terraria') || name.includes('mortal kombat') || name.includes('игра')) return { key: 'starvell_steam_games', title: 'Steam и игры', icon: 'fa-brands fa-steam', subtitle: 'Игры, гифт-карты и ключи' };
+        if (name.includes('apple') || name.includes('itunes')) return { key: 'starvell_apple', title: 'Apple / iTunes', icon: 'fa-brands fa-apple', subtitle: 'Подарочные карты Apple' };
+        if (name.includes('roblox')) return { key: 'starvell_roblox', title: 'Roblox', icon: 'fa-solid fa-cube', subtitle: 'Аккаунты и игровые товары' };
+        if (name.includes('clash')) return { key: 'starvell_clash', title: 'Clash of Clans', icon: 'fa-solid fa-shield-halved', subtitle: 'Аккаунты и прогресс' };
+        return { key: 'starvell_other', title: 'Другие товары STARVELL', icon: 'fa-solid fa-layer-group', subtitle: 'Прочие цифровые товары' };
+      }
+
+      if (name.includes('forza') || name.includes('far cry') || name.includes('detroit') || name.includes('fc 25')) return { key: 'playerok_steam_games', title: 'Игры и аренда Steam', icon: 'fa-brands fa-steam', subtitle: 'Проданные игровые товары' };
+      if (name.includes('th 16') || name.includes('clash')) return { key: 'playerok_clash_accounts', title: 'Аккаунты Clash of Clans', icon: 'fa-solid fa-shield-halved', subtitle: 'Аккаунты и прогресс' };
+      if (name.includes('discord')) return { key: 'playerok_discord', title: 'Discord Nitro', icon: 'fa-brands fa-discord', subtitle: 'Nitro и цифровые услуги' };
+      if (name.includes('appstore') || name.includes('itunes') || name.includes('apple')) return { key: 'playerok_apple_cards', title: 'App Store / iTunes', icon: 'fa-brands fa-apple', subtitle: 'Подарочные карты Apple' };
+      if (name.includes('очков')) return { key: 'playerok_game_points', title: 'Игровая валюта и очки', icon: 'fa-solid fa-coins', subtitle: 'Очки и внутриигровая валюта' };
+      return { key: 'playerok_other', title: 'Другие товары Playerok', icon: 'fa-solid fa-layer-group', subtitle: 'Остальные подтверждённые продажи' };
+    }
+
+    function groupMarketplacePlaylists(items) {
+      const groups = new Map();
+      items.forEach(product => {
+        const playlist = getMarketplacePlaylist(product);
+        if (!groups.has(playlist.key)) groups.set(playlist.key, { ...playlist, items: [] });
+        groups.get(playlist.key).items.push(product);
+      });
+      return Array.from(groups.values()).sort((a, b) => a.title.localeCompare(b.title, 'ru'));
+    }
+
+    function getPlaylistStats(items) {
+      const reviewCount = items.reduce((sum, item) => sum + getReviewCount(item), 0);
+      const ratingItems = items.map(item => getAverageRating(item)).filter(Boolean);
+      const avg = ratingItems.length ? ratingItems.reduce((sum, value) => sum + value, 0) / ratingItems.length : 0;
+      const soldCount = items.filter(item => item.sold).length;
+      return { reviewCount, avg, soldCount };
+    }
+
+    function togglePlaylist(key) {
+      const section = document.getElementById(`playlist-${key}`);
+      if (section) section.classList.toggle('collapsed');
+    }
+
+    function getReviewsForProduct(productOrId) {
+      const product = typeof productOrId === 'string' ? products.find(p => p.id === productOrId) : productOrId;
+      if (!product) return [];
+      const ids = new Set([product.id, ...(product.sourceIds || [])]);
+      return reviews.filter(r => ids.has(r.productId));
+    }
+
+    function loadData() {
+      const su = localStorage.getItem('rm_users');
+      const sr = localStorage.getItem('rm_reviews');
+      products = getMarketplaceProducts(activeMarketplace);
+      users = su ? JSON.parse(su) : JSON.parse(JSON.stringify(DEFAULT_USERS));
+      reviews = sr ? JSON.parse(sr) : JSON.parse(JSON.stringify(DEFAULT_REVIEWS));
+      saveData();
+    }
+
+    function saveData() {
+      localStorage.setItem('rm_users', JSON.stringify(users));
+      localStorage.setItem('rm_reviews', JSON.stringify(reviews));
+    }
+
+    function switchMarketplace(marketplace) {
+      activeMarketplace = marketplace;
+      localStorage.setItem('rm_active_marketplace', marketplace);
+      selectedProductId = null;
+      products = getMarketplaceProducts(marketplace);
+      document.getElementById('searchInput').value = '';
+      updateMarketplaceTabs();
+      renderProducts();
+      renderDetail();
+    }
+
+    function updateMarketplaceTabs() {
+      const starvell = document.getElementById('tabStarvell');
+      const playerok = document.getElementById('tabPlayerok');
+      const panelTitle = document.getElementById('panelTitle');
+      if (starvell) starvell.classList.toggle('active', activeMarketplace === 'starvell');
+      if (playerok) playerok.classList.toggle('active', activeMarketplace === 'playerok');
+      if (panelTitle) panelTitle.textContent = `Каталог ${getMarketplaceName()}`;
+    }
+
+    /* ============================================================
+       THEME
+       ============================================================ */
+    function initTheme() {
+      const saved = localStorage.getItem('rm_theme');
+      const theme = saved || 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+      updateThemeIcon(theme);
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('rm_theme', next);
+      updateThemeIcon(next);
+    }
+
+    function updateThemeIcon(theme) {
+      document.getElementById('themeIcon').className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    }
+
+    /* ============================================================
+       HELPERS
+       ============================================================ */
+    function getInitials(name) { return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2); }
+
+    function getStarsHTML(rating) {
+      let h = '';
+      for (let i = 1; i <= 5; i++) h += `<i class="fas fa-star ${i > rating ? 'empty' : ''}"></i>`;
+      return h;
+    }
+
+    function getAverageRating(productOrId) {
+      const pr = getReviewsForProduct(productOrId);
+      if (!pr.length) return 0;
+      return pr.reduce((s, r) => s + r.rating, 0) / pr.length;
+    }
+
+    function getReviewCount(productOrId) { return getReviewsForProduct(productOrId).length; }
+    function getUserById(id) { return users.find(u => u.id === id); }
+
+    function formatDate(ds) {
+      const d = new Date(ds);
+      const m = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+      return `${d.getDate()} ${m[d.getMonth()]} ${d.getFullYear()}`;
+    }
+
+    function generateId() { return 'id_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6); }
+    function randomColor() { return AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)]; }
+
+    function pluralize(n, one, few, many) {
+      const m10 = n % 10, m100 = n % 100;
+      if (m10 === 1 && m100 !== 11) return one;
+      if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return few;
+      return many;
+    }
+
+    function escapeXml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+    }
+
+    function shortenText(value, max = 34) {
+      const clean = String(value || '').replace(/[🔥💎🩵⭐💳💵💸🏎️⚡🪙🔨⚽️•|]+/g, ' ').replace(/\s+/g, ' ').trim();
+      return clean.length > max ? clean.slice(0, max - 1) + '…' : clean;
+    }
+
+    function getProductVisual(product) {
+      const name = String(product.name || '').toLowerCase();
+      if (name.includes('forza')) return { tag: 'FORZA', emoji: '🏎️', accent: '#38bdf8', bg1: '#0f172a', bg2: '#164e63' };
+      if (name.includes('far cry')) return { tag: 'FAR CRY', emoji: '🎮', accent: '#f59e0b', bg1: '#1c1917', bg2: '#7c2d12' };
+      if (name.includes('fc 25')) return { tag: 'FC 25', emoji: '⚽', accent: '#22c55e', bg1: '#052e16', bg2: '#065f46' };
+      if (name.includes('detroit')) return { tag: 'DETROIT', emoji: '🤖', accent: '#60a5fa', bg1: '#0f172a', bg2: '#1e3a8a' };
+      if (name.includes('th 16') || name.includes('clash')) return { tag: 'CLASH', emoji: '🛡️', accent: '#f97316', bg1: '#431407', bg2: '#7c2d12' };
+      if (name.includes('discord')) return { tag: 'NITRO', emoji: '💬', accent: '#818cf8', bg1: '#1e1b4b', bg2: '#3730a3' };
+      if (name.includes('appstore') || name.includes('itunes') || name.includes('apple')) return { tag: 'APPLE', emoji: '🍎', accent: '#e5e7eb', bg1: '#111827', bg2: '#374151' };
+      if (name.includes('очков')) return { tag: 'POINTS', emoji: '🪙', accent: '#facc15', bg1: '#422006', bg2: '#854d0e' };
+      return { tag: 'PLAYEROK', emoji: '🎮', accent: '#38bdf8', bg1: '#111827', bg2: '#0f766e' };
+    }
+
+    function makeProductFallbackImage(product) {
+      const visual = getProductVisual(product || {});
+      const title = escapeXml(shortenText((product && product.name) || 'Товар Playerok', 36));
+      const price = escapeXml((product && product.price) || 'Playerok');
+      const tag = escapeXml(visual.tag);
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+          <defs>
+            <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="${visual.bg1}"/>
+              <stop offset="1" stop-color="${visual.bg2}"/>
+            </linearGradient>
+            <radialGradient id="r" cx="25%" cy="20%" r="75%">
+              <stop offset="0" stop-color="${visual.accent}" stop-opacity="0.55"/>
+              <stop offset="1" stop-color="${visual.accent}" stop-opacity="0"/>
+            </radialGradient>
+            <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="20" stdDeviation="25" flood-color="#000" flood-opacity="0.35"/>
+            </filter>
+          </defs>
+          <rect width="640" height="640" rx="72" fill="url(#g)"/>
+          <rect width="640" height="640" rx="72" fill="url(#r)"/>
+          <circle cx="510" cy="120" r="120" fill="${visual.accent}" opacity="0.14"/>
+          <circle cx="95" cy="560" r="150" fill="#ffffff" opacity="0.08"/>
+          <rect x="42" y="42" width="556" height="556" rx="54" fill="none" stroke="#fff" stroke-opacity="0.16" stroke-width="2"/>
+          <text x="64" y="105" font-size="34" font-family="Inter, Arial, sans-serif" font-weight="800" fill="${visual.accent}" letter-spacing="3">${tag}</text>
+          <text x="320" y="290" font-size="148" text-anchor="middle" dominant-baseline="middle" filter="url(#shadow)">${visual.emoji}</text>
+          <text x="320" y="430" font-size="40" font-family="Inter, Arial, sans-serif" font-weight="800" fill="#ffffff" text-anchor="middle">${title}</text>
+          <text x="320" y="482" font-size="30" font-family="Inter, Arial, sans-serif" font-weight="600" fill="#ffffff" opacity="0.78" text-anchor="middle">${price}</text>
+          <rect x="188" y="520" width="264" height="58" rx="29" fill="#fff" fill-opacity="0.14" stroke="#fff" stroke-opacity="0.16"/>
+          <text x="320" y="558" font-size="24" font-family="Inter, Arial, sans-serif" font-weight="800" fill="#ffffff" text-anchor="middle">PLAYEROK</text>
+        </svg>`;
+      return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+    }
+
+    function handleImageError(img) {
+      const product = products.find(p => p.id === img.dataset.productId) || DEFAULT_PLAYEROK_PRODUCTS.find(p => p.id === img.dataset.productId) || DEFAULT_PRODUCTS.find(p => p.id === img.dataset.productId);
+      if (!product) { img.style.display = 'none'; return; }
+      img.onerror = null;
+      img.src = makeProductFallbackImage(product);
+      img.classList.add('fallback-generated');
+    }
+
+    function getProductImage(product) {
+      return product.image || makeProductFallbackImage(product);
+    }
+
+    /* ============================================================
+       RENDER PRODUCTS
+       ============================================================ */
+    function renderProductCard(p) {
+      const avg = getAverageRating(p);
+      const count = getReviewCount(p);
+      const active = selectedProductId === p.id;
+      return `
+      <div class="product-card ${active ? 'active' : ''}" onclick="selectProduct('${p.id}')" id="product-${p.id}">
+        <div class="product-image-wrapper">
+          <img src="${getProductImage(p)}" alt="${p.name}" class="product-image" loading="lazy" data-product-id="${p.id}" onerror="handleImageError(this)">
+        </div>
+        <div class="product-info">
+          <div class="product-name">${p.name}</div>
+          <div class="product-price">${p.price}</div>
+          ${p.uniqueLabel ? `<div class="product-price" style="font-size:0.72rem;color:var(--blue-accent);margin-bottom:4px">${p.uniqueLabel}</div>` : ''}
+          <div class="product-rating">
+            <div class="stars">${getStarsHTML(Math.round(avg))}</div>
+            <span class="rating-text">${avg.toFixed(1)} (${count})</span>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function renderProducts(filter = '') {
+      const grid = document.getElementById('productsGrid');
+      const filtered = products.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()));
+      const groups = groupMarketplacePlaylists(filtered);
+      grid.innerHTML = groups.map(group => {
+        const stats = getPlaylistStats(group.items);
+        return `
+          <div class="playlist-section premium-playlist" id="playlist-${group.key}">
+            <div class="playlist-header premium-playlist-header" onclick="togglePlaylist('${group.key}')">
+              <div class="playlist-main">
+                <div class="playlist-icon"><i class="${group.icon}"></i></div>
+                <div class="playlist-copy">
+                  <div class="playlist-title"><span>${group.title}</span></div>
+                  <div class="playlist-subtitle">${group.subtitle || 'Подборка похожих товаров'}</div>
+                </div>
+              </div>
+              <div class="playlist-stats">
+                <span class="${stats.reviewCount ? '' : 'playlist-rating-empty'}"><i class="fas fa-star"></i> ${stats.reviewCount ? stats.avg.toFixed(1) : '0'}</span>
+                <span><i class="fas fa-comment-dots"></i> ${stats.reviewCount}</span>
+                <span><i class="fas fa-box"></i> ${group.items.length}</span>
+                ${stats.soldCount ? `<span><i class="fas fa-lock"></i> ${stats.soldCount}</span>` : ''}
+                <i class="fas fa-chevron-down playlist-chevron"></i>
+              </div>
+            </div>
+            <div class="playlist-products">
+              ${group.items.map(renderProductCard).join('')}
+            </div>
+          </div>
+        `;
+      }).join('') || `<div class="no-reviews"><i class="fas fa-magnifying-glass"></i><p>Ничего не найдено.</p></div>`;
+    }
+
+    /* ============================================================
+       SELECT PRODUCT
+       ============================================================ */
+    function selectProduct(pid) {
+      selectedProductId = pid;
+      renderProducts(document.getElementById('searchInput').value);
+      renderDetail();
+    }
+
+    function renderDetailPlaylist(product) {
+      const playlist = getMarketplacePlaylist(product);
+      const similar = products.filter(p => getMarketplacePlaylist(p).key === playlist.key);
+      if (similar.length <= 1) return '';
+      return `
+        <div class="detail-playlist">
+          <strong>Плейлист: ${playlist.title}</strong><br>
+          Похожие товары объединены в одну подборку.
+          <div class="detail-playlist-items">
+            ${similar.map(item => `<button class="detail-playlist-chip ${item.id === product.id ? 'active' : ''}" onclick="selectProduct('${item.id}')">${item.name.replace(/^[🔥💎🩵\s]+/, '').slice(0, 34)}${item.name.length > 34 ? '…' : ''}</button>`).join('')}
+          </div>
+        </div>`;
+    }
+
+    /* ============================================================
+       RENDER DETAIL
+       ============================================================ */
+    function renderDetail() {
+      const panel = document.getElementById('detailPanel');
+      if (!selectedProductId) {
+        panel.innerHTML = '';
+        panel.appendChild(createEmptyState());
+        return;
+      }
+      const product = products.find(p => p.id === selectedProductId);
+      if (!product) return;
+      const avg = getAverageRating(product);
+      const count = getReviewCount(product);
+
+      panel.innerHTML = `
+    <div class="product-detail">
+      <div class="detail-hero">
+        <img src="${getProductImage(product)}" alt="${product.name}" class="detail-image" loading="lazy" data-product-id="${product.id}" onerror="handleImageError(this)">
+        <div class="detail-info">
+          <h2>${product.name}</h2>
+          <div class="price">${product.price}</div>
+          ${product.uniqueLabel ? `<div class="price" style="font-size:0.9rem;color:var(--blue-accent);margin-top:-8px;margin-bottom:14px">${product.uniqueLabel}</div>` : ''}
+          <div class="detail-rating">
+            <span class="big-score">${avg.toFixed(1)}</span>
+            <div class="detail-rating-info">
+              <div class="stars">${getStarsHTML(Math.round(avg))}</div>
+              <span class="review-count">${count} ${pluralize(count, 'отзыв', 'отзыва', 'отзывов')}</span>
+            </div>
+          </div>
+          <p class="detail-description">${product.description}</p>
+          ${renderDetailPlaylist(product)}
+          ${product.sold
+            ? `<button class="submit-btn sold-btn" style="max-width:280px;margin:20px auto 0" disabled><i class="fas fa-lock"></i> Продано</button>`
+            : (product.link ? `<a href="${product.link}" target="_blank" rel="noopener" class="submit-btn" style="max-width:280px;margin:20px auto 0;text-decoration:none"><i class="fas fa-bag-shopping"></i> Купить на ${getMarketplaceName()}</a>` : '')}
+        </div>
+      </div>
+    </div>
+
+    <div class="reviews-section">
+      <div class="reviews-header">
+        <h3>Отзывы и оценки</h3>
+        <select class="sort-select" id="sortSelect" onchange="changeSort(this.value)">
+          <option value="newest" ${currentSort === 'newest' ? 'selected' : ''}>Новые → Старые</option>
+          <option value="oldest" ${currentSort === 'oldest' ? 'selected' : ''}>Старые → Новые</option>
+          <option value="rating_desc" ${currentSort === 'rating_desc' ? 'selected' : ''}>По убыванию оценки</option>
+          <option value="rating_asc" ${currentSort === 'rating_asc' ? 'selected' : ''}>По возрастанию оценки</option>
+        </select>
+      </div>
+      <div class="reviews-list" id="reviewsList"></div>
+    </div>
+
+    <div class="review-form-container reviews-source-note">
+      <h3>Отзывы с сайта ${getMarketplaceName()}</h3>
+      <p>Добавление новых отзывов на этой странице отключено. Ниже отображаются сохранённые отзывы, привязанные к выбранному товару.</p>
+    </div>`;
+
+      renderReviews();
+    }
+
+    function createEmptyState() {
+      const d = document.createElement('div');
+      d.className = 'empty-state';
+      d.innerHTML = `<i class="fas fa-hand-pointer"></i><h3>Выберите товар</h3><p>Нажмите на товар из каталога, чтобы увидеть подробности и отзывы</p>`;
+      return d;
+    }
+
+    /* ============================================================
+       RENDER REVIEWS
+       ============================================================ */
+    function renderReviews() {
+      const list = document.getElementById('reviewsList');
+      if (!list) return;
+      let pr = getReviewsForProduct(selectedProductId);
+      switch (currentSort) {
+        case 'newest': pr.sort((a, b) => new Date(b.date) - new Date(a.date)); break;
+        case 'oldest': pr.sort((a, b) => new Date(a.date) - new Date(b.date)); break;
+        case 'rating_desc': pr.sort((a, b) => b.rating - a.rating); break;
+        case 'rating_asc': pr.sort((a, b) => a.rating - b.rating); break;
+      }
+      if (!pr.length) {
+        list.innerHTML = `<div class="no-reviews"><i class="fas fa-comment-slash"></i><p>Для этого товара пока нет отзывов.</p></div>`;
+        return;
+      }
+      list.innerHTML = pr.map(r => {
+        const u = getUserById(r.userId);
+        if (!u) return '';
+        const ini = getInitials(u.name);
+        const del = false;
+        return `
+      <div class="review-card" id="review-${r.id}">
+        <div class="review-top">
+          <div class="review-user" onclick="openProfile('${u.id}')">
+            <div class="avatar" style="background:${u.color}">${ini}</div>
+            <div class="review-user-info">
+              <h4>${u.name}</h4>
+              <span class="review-date">${formatDate(r.date)}</span>
+            </div>
+          </div>
+          <div class="review-actions">
+            <div class="review-stars">${getStarsHTML(r.rating)}</div>
+            ${del ? `<button class="delete-btn" onclick="deleteReview('${r.id}')" title="Удалить"><i class="fas fa-trash-can"></i></button>` : ''}
+          </div>
+        </div>
+        <div class="review-text">${r.text}</div>
+      </div>`;
+      }).join('');
+    }
+
+    function changeSort(v) { currentSort = v; renderReviews(); }
+
+    /* ============================================================
+       STAR RATING INPUT
+       ============================================================ */
+    let selectedRating = 0;
+
+    function initStarRating() {
+      const c = document.getElementById('starRatingInput');
+      if (!c) return;
+      selectedRating = 0;
+      const stars = c.querySelectorAll('i');
+      stars.forEach(s => {
+        s.addEventListener('mouseenter', () => {
+          const v = parseInt(s.dataset.value);
+          stars.forEach(x => x.classList.toggle('active', parseInt(x.dataset.value) <= v));
+        });
+        s.addEventListener('click', () => {
+          selectedRating = parseInt(s.dataset.value);
+          stars.forEach(x => x.classList.toggle('active', parseInt(x.dataset.value) <= selectedRating));
+        });
+      });
+      c.addEventListener('mouseleave', () => {
+        stars.forEach(x => x.classList.toggle('active', parseInt(x.dataset.value) <= selectedRating));
+      });
+    }
+
+    /* ============================================================
+       SUBMIT REVIEW
+       ============================================================ */
+    function submitReview(e) {
+      e.preventDefault();
+      const ni = document.getElementById('reviewName');
+      const ti = document.getElementById('reviewText');
+      const name = ni.value.trim();
+      const text = ti.value.trim();
+      if (!name) { showToast('Введите имя', 'error'); return; }
+      if (selectedRating === 0) { showToast('Выберите оценку', 'error'); return; }
+      if (!text) { showToast('Напишите отзыв', 'error'); return; }
+
+      let user = users.find(u => u.name.toLowerCase() === name.toLowerCase());
+      if (!user) {
+        user = { id: generateId(), name, color: randomColor(), regDate: new Date().toISOString().split('T')[0], socials: generateRandomSocials(name) };
+        users.push(user);
+      }
+      sessionUserNames.add(user.name);
+
+      const review = { id: generateId(), productId: selectedProductId, userId: user.id, rating: selectedRating, text, date: new Date().toISOString().split('T')[0] };
+      reviews.push(review);
+      saveData();
+      ni.value = ''; ti.value = ''; selectedRating = 0;
+      renderDetail();
+      renderProducts(document.getElementById('searchInput').value);
+      setTimeout(() => { const el = document.getElementById(`review-${review.id}`); if (el) el.classList.add('new-review'); }, 50);
+      showToast('Отзыв опубликован', 'success');
+    }
+
+    function generateRandomSocials(name) {
+      const h = name.toLowerCase().replace(/[^a-zа-яё]/gi, '').slice(0, 10) || 'user';
+      const l = transliterate(h);
+      const sf = ['_dev', '_tech', '', '_pro', '_code'];
+      const s = sf[Math.floor(Math.random() * sf.length)];
+      return { telegram: `@${l}${s}`, github: `${l}${s}`.replace('@', ''), twitter: `@${l}${s}` };
+    }
+
+    function transliterate(s) {
+      const m = { 'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya' };
+      return s.split('').map(c => m[c] || m[c.toLowerCase()] || c).join('');
+    }
+
+    /* ============================================================
+       DELETE REVIEW
+       ============================================================ */
+    function deleteReview(rid) {
+      const el = document.getElementById(`review-${rid}`);
+      if (el) {
+        el.style.animation = 'reviewRemove 0.35s ease forwards';
+        setTimeout(() => {
+          reviews = reviews.filter(r => r.id !== rid);
+          saveData(); renderDetail(); renderProducts(document.getElementById('searchInput').value);
+          showToast('Отзыв удалён', 'success');
+        }, 300);
+      } else {
+        reviews = reviews.filter(r => r.id !== rid);
+        saveData(); renderDetail(); renderProducts(document.getElementById('searchInput').value);
+        showToast('Отзыв удалён', 'success');
+      }
+    }
+
+    /* ============================================================
+       PROFILE MODAL
+       ============================================================ */
+    function openProfile(uid) {
+      const user = getUserById(uid);
+      if (!user) return;
+      const ur = reviews.filter(r => r.userId === uid);
+      const avg = ur.length ? (ur.reduce((s, r) => s + r.rating, 0) / ur.length).toFixed(1) : '—';
+      const ini = getInitials(user.name);
+
+      document.getElementById('profileModal').innerHTML = `
+    <div class="modal-header">
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-xmark"></i></button>
+      <div class="avatar large" style="background:${user.color}">${ini}</div>
+      <h2>${user.name}</h2>
+      <div class="join-date"><i class="fas fa-calendar-check"></i> С ${formatDate(user.regDate)}</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-stats">
+        <div class="stat-card">
+          <div class="stat-value">${ur.length}</div>
+          <div class="stat-label">${pluralize(ur.length, 'Отзыв', 'Отзыва', 'Отзывов')}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${avg}</div>
+          <div class="stat-label">Ср. оценка</div>
+        </div>
+      </div>
+      ${user.socials ? `
+      <div class="modal-socials">
+        <h4>Соцсети</h4>
+        ${user.socials.telegram ? `<a href="https://t.me/${user.socials.telegram.replace('@', '')}" target="_blank" rel="noopener" class="social-link"><i class="fab fa-telegram"></i>Telegram<span class="social-username">${user.socials.telegram}</span></a>` : ''}
+        ${user.socials.github ? `<a href="https://github.com/${user.socials.github}" target="_blank" rel="noopener" class="social-link"><i class="fab fa-github"></i>GitHub<span class="social-username">${user.socials.github}</span></a>` : ''}
+        ${user.socials.twitter ? `<a href="https://x.com/${user.socials.twitter.replace('@', '')}" target="_blank" rel="noopener" class="social-link"><i class="fab fa-x-twitter"></i>X / Twitter<span class="social-username">${user.socials.twitter}</span></a>` : ''}
+      </div>` : ''}
+    </div>
+    <div class="modal-footer">
+      <button class="close-modal-btn" onclick="closeModal()">Закрыть</button>
+    </div>`;
+
+      document.getElementById('modalOverlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    /* ============================================================
+       TOAST
+       ============================================================ */
+    function showToast(msg, type = 'success') {
+      const c = document.getElementById('toastContainer');
+      const t = document.createElement('div');
+      t.className = `toast ${type}`;
+      const icons = { success: 'fa-circle-check', error: 'fa-circle-exclamation' };
+      t.innerHTML = `<i class="fas ${icons[type] || icons.success}"></i> ${msg}`;
+      c.appendChild(t);
+      setTimeout(() => { t.style.animation = 'toastOut 0.3s ease forwards'; setTimeout(() => t.remove(), 300); }, 2500);
+    }
+
+    /* ============================================================
+       EVENTS
+       ============================================================ */
+    document.getElementById('searchInput').addEventListener('input', function () { renderProducts(this.value); });
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+    document.getElementById('modalOverlay').addEventListener('click', function (e) { if (e.target === this) closeModal(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+    document.getElementById('logo').addEventListener('click', function (e) {
+      e.preventDefault(); selectedProductId = null;
+      document.getElementById('searchInput').value = '';
+      renderProducts(); renderDetail();
+    });
+
+    /* ============================================================
+       INIT
+       ============================================================ */
+    initTheme();
+    loadData();
+    updateMarketplaceTabs();
+    renderProducts();
+    renderDetail();
+  </script>
+</body>
+
+</html>
